@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Prompt Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .preview-image {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .preview-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .preview-image.selected {
+            border: 3px solid #3b82f6;
+            transform: scale(1.02);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fade-in 0.3s ease-in-out;
+        }
+        .multi-select-btn {
+            transition: all 0.2s ease;
+        }
+        .multi-select-btn.selected {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b border-gray-200">
+        <div class="container mx-auto px-4 py-6">
+            <h1 class="text-4xl font-bold text-gray-800 text-center">
+                🚀 Monster Prompt Generator
+            </h1>
+            <p class="text-gray-600 text-center mt-2 max-w-2xl mx-auto">
+                Create expert-level, structured prompts for AI models. Transform your ideas into precise, high-performance instructions.
+            </p>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="container mx-auto px-4">
+            <div class="flex overflow-x-auto scrollbar-hide">
+                <button class="tab-btn active px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 border-blue-500 text-blue-600" data-tab="image-generation">
+                    🎨 Image Generation
+                </button>
+                <button class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="writing">
+                    ✍️ Writing
+                </button>
+                <button class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="web-design">
+                    💻 Web Design
+                </button>
+                <button class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="coding">
+                    👨‍💻 Coding
+                </button>
+                <button class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="logo-design">
+                    🎯 Logo Design
+                </button>
+                <button class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="trending">
+                    🔥 Trending
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        
+        <!-- Image Generation Tab -->
+        <div id="image-generation" class="tab-content active">
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <span class="mr-2">🎨</span>
+                    AI Image Generation Prompt Builder
+                </h2>
+                
+                <form id="image-form" class="space-y-8">
+                    <!-- Main Subject & Action -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Main Subject</label>
+                            <select id="main-subject" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select main subject...</option>
+                                <option value="A lone astronaut">A lone astronaut</option>
+                                <option value="A mystical warrior">A mystical warrior</option>
+                                <option value="A futuristic cityscape">A futuristic cityscape</option>
+                                <option value="A majestic dragon">A majestic dragon</option>
+                                <option value="An ancient temple">An ancient temple</option>
+                                <option value="A cyberpunk street">A cyberpunk street</option>
+                                <option value="A magical forest">A magical forest</option>
+                                <option value="A steampunk airship">A steampunk airship</option>
+                                <option value="A neon-lit nightclub">A neon-lit nightclub</option>
+                                <option value="A vintage automobile">A vintage automobile</option>
+                                <option value="A mountain landscape">A mountain landscape</option>
+                                <option value="A underwater scene">A underwater scene</option>
+                                <option value="A space station">A space station</option>
+                                <option value="A medieval castle">A medieval castle</option>
+                                <option value="A robot companion">A robot companion</option>
+                                <option value="A fairy tale cottage">A fairy tale cottage</option>
+                                <option value="A desert oasis">A desert oasis</option>
+                                <option value="A floating island">A floating island</option>
+                                <option value="A crystal cave">A crystal cave</option>
+                                <option value="custom">Custom (specify below)</option>
+                            </select>
+                            <input type="text" id="custom-subject" class="w-full p-3 border border-gray-300 rounded-lg mt-2 hidden" placeholder="Enter custom subject...">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Action/Pose</label>
+                            <select id="action-pose" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select action/pose...</option>
+                                <option value="standing heroically">standing heroically</option>
+                                <option value="sitting pensively">sitting pensively</option>
+                                <option value="walking confidently">walking confidently</option>
+                                <option value="looking into the distance">looking into the distance</option>
+                                <option value="in dynamic motion">in dynamic motion</option>
+                                <option value="emerging from shadows">emerging from shadows</option>
+                                <option value="floating gracefully">floating gracefully</option>
+                                <option value="racing through space">racing through space</option>
+                                <option value="glowing with energy">glowing with energy</option>
+                                <option value="surrounded by light">surrounded by light</option>
+                                <option value="casting a spell">casting a spell</option>
+                                <option value="wielding a weapon">wielding a weapon</option>
+                                <option value="reading an ancient tome">reading an ancient tome</option>
+                                <option value="gazing at the stars">gazing at the stars</option>
+                                <option value="dancing elegantly">dancing elegantly</option>
+                                <option value="meditating peacefully">meditating peacefully</option>
+                                <option value="laughing joyfully">laughing joyfully</option>
+                                <option value="sleeping soundly">sleeping soundly</option>
+                                <option value="running swiftly">running swiftly</option>
+                                <option value="custom">Custom (specify below)</option>
+                            </select>
+                            <input type="text" id="custom-action" class="w-full p-3 border border-gray-300 rounded-lg mt-2 hidden" placeholder="Enter custom action...">
+                        </div>
+                    </div>
+
+                    <!-- Character Reference -->
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Character Reference (Copy Face)</h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Reference Image URL</label>
+                                <input type="url" id="cref-url" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="https://example.com/image.jpg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Character Weight</label>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-500">0</span>
+                                    <input type="range" id="char-weight" min="0" max="100" value="50" class="flex-1">
+                                    <span class="text-sm text-gray-500">100</span>
+                                    <span id="weight-value" class="text-sm font-medium text-blue-600">50</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Style Selection with Previews -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Style (Multi-Select)</h3>
+                        <div id="style-buttons" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="cinematic">
+                                <div class="font-medium">Cinematic</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="analog film">
+                                <div class="font-medium">Analog Film</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="digital art">
+                                <div class="font-medium">Digital Art</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="oil painting">
+                                <div class="font-medium">Oil Painting</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="watercolor">
+                                <div class="font-medium">Watercolor</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="sketch">
+                                <div class="font-medium">Sketch</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="anime">
+                                <div class="font-medium">Anime</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="photorealistic">
+                                <div class="font-medium">Photorealistic</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="cyberpunk">
+                                <div class="font-medium">Cyberpunk</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="steampunk">
+                                <div class="font-medium">Steampunk</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="minimalist">
+                                <div class="font-medium">Minimalist</div>
+                            </button>
+                            <button type="button" class="multi-select-btn style-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="surreal">
+                                <div class="font-medium">Surreal</div>
+                            </button>
+                        </div>
+                        
+                        <!-- Style Preview -->
+                        <div class="bg-gray-100 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-gray-700 mb-3">Style Preview</h4>
+                            <div id="style-preview" class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                                <span class="text-gray-500">Select a style to see preview</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lighting Selection with Previews -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Lighting (Multi-Select)</h3>
+                        <div id="lighting-buttons" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="golden hour">
+                                <div class="font-medium">Golden Hour</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="neon lighting">
+                                <div class="font-medium">Neon Lighting</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="soft studio lighting">
+                                <div class="font-medium">Soft Studio</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="dramatic shadows">
+                                <div class="font-medium">Dramatic Shadows</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="backlit">
+                                <div class="font-medium">Backlit</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="rim lighting">
+                                <div class="font-medium">Rim Lighting</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="volumetric lighting">
+                                <div class="font-medium">Volumetric</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="moonlight">
+                                <div class="font-medium">Moonlight</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="candlelight">
+                                <div class="font-medium">Candlelight</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="natural lighting">
+                                <div class="font-medium">Natural</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="harsh lighting">
+                                <div class="font-medium">Harsh</div>
+                            </button>
+                            <button type="button" class="multi-select-btn lighting-btn p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 text-center" data-value="fluorescent">
+                                <div class="font-medium">Fluorescent</div>
+                            </button>
+                        </div>
+                        
+                        <!-- Lighting Preview -->
+                        <div class="bg-gray-100 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-gray-700 mb-3">Lighting Preview</h4>
+                            <div id="lighting-preview" class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                                <span class="text-gray-500">Select lighting to see preview</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Camera Settings -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Shot/View</label>
+                            <select id="shot-view" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select shot/view...</option>
+                                <option value="wide shot">Wide Shot</option>
+                                <option value="close-up">Close-up</option>
+                                <option value="medium shot">Medium Shot</option>
+                                <option value="extreme close-up">Extreme Close-up</option>
+                                <option value="bird's eye view">Bird's Eye View</option>
+                                <option value="worm's eye view">Worm's Eye View</option>
+                                <option value="dutch angle">Dutch Angle</option>
+                                <option value="overhead shot">Overhead Shot</option>
+                                <option value="profile shot">Profile Shot</option>
+                                <option value="three-quarter view">Three-Quarter View</option>
+                                <option value="establishing shot">Establishing Shot</option>
+                                <option value="macro shot">Macro Shot</option>
+                                <option value="panoramic view">Panoramic View</option>
+                                <option value="fisheye view">Fisheye View</option>
+                                <option value="tracking shot">Tracking Shot</option>
+                                <option value="aerial view">Aerial View</option>
+                                <option value="underwater shot">Underwater Shot</option>
+                                <option value="point of view">Point of View</option>
+                                <option value="mirror shot">Mirror Shot</option>
+                                <option value="silhouette">Silhouette</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Lens Type</label>
+                            <select id="lens-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select lens type...</option>
+                                <option value="anamorphic lens">Anamorphic Lens</option>
+                                <option value="50mm lens">50mm Lens</option>
+                                <option value="85mm lens">85mm Lens</option>
+                                <option value="24mm lens">24mm Lens</option>
+                                <option value="fisheye lens">Fisheye Lens</option>
+                                <option value="macro lens">Macro Lens</option>
+                                <option value="telephoto lens">Telephoto Lens</option>
+                                <option value="wide-angle lens">Wide-angle Lens</option>
+                                <option value="vintage lens">Vintage Lens</option>
+                                <option value="tilt-shift lens">Tilt-shift Lens</option>
+                                <option value="zoom lens">Zoom Lens</option>
+                                <option value="prime lens">Prime Lens</option>
+                                <option value="portrait lens">Portrait Lens</option>
+                                <option value="cinema lens">Cinema Lens</option>
+                                <option value="bokeh lens">Bokeh Lens</option>
+                                <option value="pinhole camera">Pinhole Camera</option>
+                                <option value="polaroid camera">Polaroid Camera</option>
+                                <option value="film camera">Film Camera</option>
+                                <option value="digital camera">Digital Camera</option>
+                                <option value="smartphone camera">Smartphone Camera</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Technical Parameters -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Aspect Ratio</label>
+                            <select id="aspect-ratio" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select aspect ratio...</option>
+                                <option value="--ar 1:1">1:1 (Square)</option>
+                                <option value="--ar 16:9">16:9 (Widescreen)</option>
+                                <option value="--ar 4:3">4:3 (Standard)</option>
+                                <option value="--ar 2:3">2:3 (Portrait)</option>
+                                <option value="--ar 3:4">3:4 (Portrait)</option>
+                                <option value="--ar 9:16">9:16 (Vertical)</option>
+                                <option value="--ar 21:9">21:9 (Ultra-wide)</option>
+                                <option value="--ar 3:2">3:2 (Classic)</option>
+                                <option value="--ar 5:4">5:4 (Medium Format)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Negative Prompt</label>
+                            <textarea id="negative-prompt" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Elements to exclude (e.g., blurry, extra limbs, text, watermark)"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Writing Tab -->
+        <div id="writing" class="tab-content">
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <span class="mr-2">✍️</span>
+                    Writing Prompt Builder
+                </h2>
+                <p class="text-gray-600 mb-6">Generate structured writing prompts using the RACE framework (Role, Action, Context, Expectation)</p>
+                
+                <form id="writing-form" class="space-y-8">
+                    <!-- RACE Framework Section -->
+                    <div class="bg-blue-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">📝 RACE Framework</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Role -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Role</label>
+                                <select id="writing-role" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Select a role...</option>
+                                    <option value="Creative Writer">Creative Writer</option>
+                                    <option value="Technical Writer">Technical Writer</option>
+                                    <option value="Content Strategist">Content Strategist</option>
+                                    <option value="Copywriter">Copywriter</option>
+                                    <option value="Journalist">Journalist</option>
+                                    <option value="Novelist">Novelist</option>
+                                    <option value="Blogger">Blogger</option>
+                                    <option value="Script Writer">Script Writer</option>
+                                    <option value="Academic Writer">Academic Writer</option>
+                                    <option value="Marketing Writer">Marketing Writer</option>
+                                    <option value="Grant Writer">Grant Writer</option>
+                                    <option value="Speech Writer">Speech Writer</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Action -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Action</label>
+                                <select id="writing-action" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Select an action...</option>
+                                    <option value="Write an article">Write an article</option>
+                                    <option value="Create a story">Create a story</option>
+                                    <option value="Draft a script">Draft a script</option>
+                                    <option value="Compose an essay">Compose an essay</option>
+                                    <option value="Develop a blog post">Develop a blog post</option>
+                                    <option value="Write a proposal">Write a proposal</option>
+                                    <option value="Create copy">Create copy</option>
+                                    <option value="Draft a report">Draft a report</option>
+                                    <option value="Write a review">Write a review</option>
+                                    <option value="Create content">Create content</option>
+                                    <option value="Write a letter">Write a letter</option>
+                                    <option value="Develop a case study">Develop a case study</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-1 gap-6 mt-6">
+                            <!-- Context -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Context</label>
+                                <textarea id="writing-context" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Describe the situation, background, or setting for the writing task..."></textarea>
+                            </div>
+                            
+                            <!-- Expectation -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Expectation</label>
+                                <textarea id="writing-expectation" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Describe the desired outcome, goals, or specific requirements..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Writing Specifications -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Topic/Subject -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Topic/Subject</label>
+                            <input type="text" id="writing-topic" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter the main topic or subject...">
+                        </div>
+                        
+                        <!-- Word Count Target -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Word Count Target</label>
+                            <select id="writing-word-count" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select word count...</option>
+                                <option value="100-300 words">100-300 words (Short)</option>
+                                <option value="300-500 words">300-500 words (Medium)</option>
+                                <option value="500-800 words">500-800 words (Standard)</option>
+                                <option value="800-1200 words">800-1200 words (Long)</option>
+                                <option value="1200-2000 words">1200-2000 words (Extended)</option>
+                                <option value="2000+ words">2000+ words (Comprehensive)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Writing Style & Tone -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Writing Style -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Writing Style</label>
+                            <select id="writing-style" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select writing style...</option>
+                                <option value="Formal">Formal</option>
+                                <option value="Informal">Informal</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Conversational">Conversational</option>
+                                <option value="Professional">Professional</option>
+                                <option value="Creative">Creative</option>
+                                <option value="Technical">Technical</option>
+                                <option value="Persuasive">Persuasive</option>
+                                <option value="Narrative">Narrative</option>
+                                <option value="Descriptive">Descriptive</option>
+                                <option value="Humorous">Humorous</option>
+                                <option value="Authoritative">Authoritative</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Target Audience -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Target Audience</label>
+                            <select id="writing-audience" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select target audience...</option>
+                                <option value="General public">General Public</option>
+                                <option value="Professionals">Professionals</option>
+                                <option value="Students">Students</option>
+                                <option value="Academics">Academics</option>
+                                <option value="Industry experts">Industry Experts</option>
+                                <option value="Business leaders">Business Leaders</option>
+                                <option value="Young adults">Young Adults</option>
+                                <option value="Parents">Parents</option>
+                                <option value="Customers">Customers</option>
+                                <option value="Investors">Investors</option>
+                                <option value="Employees">Employees</option>
+                                <option value="Stakeholders">Stakeholders</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Requirements -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Additional Requirements</label>
+                        <textarea id="writing-additional" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Any specific formatting, SEO keywords, citations, or other requirements..."></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Web Design Tab -->\n        <div id="web-design" class="tab-content">
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <span class="mr-2">💻</span>
+                    Web Design Prompt Builder
+                </h2>
+                <p class="text-gray-600 mb-6">Generate structured web design prompts using the CO-STAR framework (Context, Objective, Style, Tone, Audience, Response)</p>
+                
+                <form id="web-design-form" class="space-y-8">
+                    <!-- CO-STAR Framework Section -->
+                    <div class="bg-purple-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">🌟 CO-STAR Framework</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Context -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Context</label>
+                                <textarea id="web-context" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="Describe the business, industry, or project background..."></textarea>
+                            </div>
+                            
+                            <!-- Objective -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Objective</label>
+                                <textarea id="web-objective" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="What specific goals should the design achieve?"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <!-- Style -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Style Direction</label>
+                                <select id="web-style" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    <option value="">Select style direction...</option>
+                                    <option value="Modern & Minimalist">Modern & Minimalist</option>
+                                    <option value="Corporate & Professional">Corporate & Professional</option>
+                                    <option value="Creative & Artistic">Creative & Artistic</option>
+                                    <option value="Bold & Vibrant">Bold & Vibrant</option>
+                                    <option value="Clean & Elegant">Clean & Elegant</option>
+                                    <option value="Playful & Fun">Playful & Fun</option>
+                                    <option value="Luxury & Premium">Luxury & Premium</option>
+                                    <option value="Tech & Futuristic">Tech & Futuristic</option>
+                                    <option value="Retro & Vintage">Retro & Vintage</option>
+                                    <option value="Natural & Organic">Natural & Organic</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Tone -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Tone</label>
+                                <select id="web-tone" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    <option value="">Select tone...</option>
+                                    <option value="Professional">Professional</option>
+                                    <option value="Friendly">Friendly</option>
+                                    <option value="Authoritative">Authoritative</option>
+                                    <option value="Approachable">Approachable</option>
+                                    <option value="Innovative">Innovative</option>
+                                    <option value="Trustworthy">Trustworthy</option>
+                                    <option value="Energetic">Energetic</option>
+                                    <option value="Sophisticated">Sophisticated</option>
+                                    <option value="Welcoming">Welcoming</option>
+                                    <option value="Expert">Expert</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <!-- Audience -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Target Audience</label>
+                                <select id="web-audience" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    <option value="">Select target audience...</option>
+                                    <option value="Business professionals">Business Professionals</option>
+                                    <option value="Young millennials">Young Millennials</option>
+                                    <option value="Tech enthusiasts">Tech Enthusiasts</option>
+                                    <option value="Creative professionals">Creative Professionals</option>
+                                    <option value="Small business owners">Small Business Owners</option>
+                                    <option value="Corporate executives">Corporate Executives</option>
+                                    <option value="Students">Students</option>
+                                    <option value="General consumers">General Consumers</option>
+                                    <option value="Industry experts">Industry Experts</option>
+                                    <option value="Startups">Startups</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Response Format -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Response Format</label>
+                                <select id="web-response" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    <option value="">Select response format...</option>
+                                    <option value="Detailed design brief">Detailed Design Brief</option>
+                                    <option value="Design concept outline">Design Concept Outline</option>
+                                    <option value="Visual style guide">Visual Style Guide</option>
+                                    <option value="Layout specifications">Layout Specifications</option>
+                                    <option value="Design mockup description">Design Mockup Description</option>
+                                    <option value="Component library plan">Component Library Plan</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Website Type & Features -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Website Type -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Website Type</label>
+                            <select id="web-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Select website type...</option>
+                                <option value="Landing page">Landing Page</option>
+                                <option value="Corporate website">Corporate Website</option>
+                                <option value="E-commerce site">E-commerce Site</option>
+                                <option value="Portfolio website">Portfolio Website</option>
+                                <option value="Blog/Magazine">Blog/Magazine</option>
+                                <option value="SaaS platform">SaaS Platform</option>
+                                <option value="Mobile app">Mobile App</option>
+                                <option value="Dashboard">Dashboard</option>
+                                <option value="Educational platform">Educational Platform</option>
+                                <option value="Non-profit website">Non-profit Website</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Key Features -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Key Features Needed</label>
+                            <div class="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="web-features" value="Contact form" class="mr-2">
+                                    Contact Form
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="web-features" value="Shopping cart" class="mr-2">
+                                    Shopping Cart
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="web-features" value="User authentication" class="mr-2">
+                                    User Auth
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="web-features" value="Search functionality" class="mr-2">
+                                    Search
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="web-features" value="Blog section" class="mr-2">
+                                    Blog Section
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="web-features" value="Gallery/Portfolio" class="mr-2">
+                                    Gallery
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="web-features" value="Social media integration" class="mr-2">
+                                    Social Media
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="web-features" value="Newsletter signup" class="mr-2">
+                                    Newsletter
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Color Scheme & Layout -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Color Preferences -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Color Scheme Preference</label>
+                            <select id="web-colors" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Select color scheme...</option>
+                                <option value="Monochromatic">Monochromatic</option>
+                                <option value="Blue & white">Blue & White</option>
+                                <option value="Dark theme">Dark Theme</option>
+                                <option value="Bright & colorful">Bright & Colorful</option>
+                                <option value="Earth tones">Earth Tones</option>
+                                <option value="Pastels">Pastels</option>
+                                <option value="High contrast">High Contrast</option>
+                                <option value="Brand colors">Brand Colors</option>
+                                <option value="Gradient-based">Gradient-based</option>
+                                <option value="Neutral palette">Neutral Palette</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Layout Style -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Layout Style</label>
+                            <select id="web-layout" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Select layout style...</option>
+                                <option value="Grid-based">Grid-based</option>
+                                <option value="Single page">Single Page</option>
+                                <option value="Multi-page">Multi-page</option>
+                                <option value="Card-based">Card-based</option>
+                                <option value="Sidebar navigation">Sidebar Navigation</option>
+                                <option value="Full-width">Full-width</option>
+                                <option value="Centered content">Centered Content</option>
+                                <option value="Magazine style">Magazine Style</option>
+                                <option value="Dashboard style">Dashboard Style</option>
+                                <option value="Mobile-first">Mobile-first</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Special Requirements -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Special Requirements</label>
+                        <textarea id="web-requirements" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="Any accessibility needs, technical constraints, branding guidelines, or specific design elements..."></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Coding Tab -->
+        <div id="coding" class="tab-content">
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <span class="mr-2">👨‍💻</span>
+                    Coding Prompt Builder
+                </h2>
+                <p class="text-gray-600 mb-6">Generate structured coding prompts using the CRISPE framework (Capacity, Role, Insight, Statement, Personality, Experiment)</p>
+                
+                <form id="coding-form" class="space-y-8">
+                    <!-- CRISPE Framework Section -->
+                    <div class="bg-green-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">⚡ CRISPE Framework</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Capacity -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Capacity (Act as...)</label>
+                                <select id="coding-capacity" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option value="">Select capacity...</option>
+                                    <option value="Senior Software Engineer">Senior Software Engineer</option>
+                                    <option value="Full-Stack Developer">Full-Stack Developer</option>
+                                    <option value="Frontend Developer">Frontend Developer</option>
+                                    <option value="Backend Developer">Backend Developer</option>
+                                    <option value="DevOps Engineer">DevOps Engineer</option>
+                                    <option value="Data Scientist">Data Scientist</option>
+                                    <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+                                    <option value="Mobile App Developer">Mobile App Developer</option>
+                                    <option value="System Architect">System Architect</option>
+                                    <option value="Security Expert">Security Expert</option>
+                                    <option value="Database Administrator">Database Administrator</option>
+                                    <option value="API Developer">API Developer</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Role -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Role (Your task is...)</label>
+                                <select id="coding-role" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option value="">Select role...</option>
+                                    <option value="Debug and fix code">Debug and Fix Code</option>
+                                    <option value="Write new feature">Write New Feature</option>
+                                    <option value="Optimize performance">Optimize Performance</option>
+                                    <option value="Refactor existing code">Refactor Existing Code</option>
+                                    <option value="Create documentation">Create Documentation</option>
+                                    <option value="Design system architecture">Design System Architecture</option>
+                                    <option value="Implement API">Implement API</option>
+                                    <option value="Setup development environment">Setup Development Environment</option>
+                                    <option value="Write unit tests">Write Unit Tests</option>
+                                    <option value="Review code">Review Code</option>
+                                    <option value="Migrate legacy code">Migrate Legacy Code</option>
+                                    <option value="Integrate third-party service">Integrate Third-party Service</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-1 gap-6 mt-6">
+                            <!-- Insight -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Insight (Background context...)</label>
+                                <textarea id="coding-insight" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Provide background context, current situation, or technical constraints..."></textarea>
+                            </div>
+                            
+                            <!-- Statement -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Statement (What needs to be done...)</label>
+                                <textarea id="coding-statement" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Clearly describe the specific task or problem to solve..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <!-- Personality -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Personality (Communication style...)</label>
+                                <select id="coding-personality" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option value="">Select personality...</option>
+                                    <option value="Professional and concise">Professional and Concise</option>
+                                    <option value="Detailed and explanatory">Detailed and Explanatory</option>
+                                    <option value="Beginner-friendly">Beginner-friendly</option>
+                                    <option value="Expert-level technical">Expert-level Technical</option>
+                                    <option value="Step-by-step guidance">Step-by-step Guidance</option>
+                                    <option value="Code-focused with minimal text">Code-focused with Minimal Text</option>
+                                    <option value="Educational and teaching">Educational and Teaching</option>
+                                    <option value="Problem-solving oriented">Problem-solving Oriented</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Experiment -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Experiment (Output format...)</label>
+                                <select id="coding-experiment" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option value="">Select output format...</option>
+                                    <option value="Complete working code">Complete Working Code</option>
+                                    <option value="Code with detailed comments">Code with Detailed Comments</option>
+                                    <option value="Step-by-step implementation">Step-by-step Implementation</option>
+                                    <option value="Multiple solution approaches">Multiple Solution Approaches</option>
+                                    <option value="Code review and suggestions">Code Review and Suggestions</option>
+                                    <option value="Architecture diagram and code">Architecture Diagram and Code</option>
+                                    <option value="Test cases and implementation">Test Cases and Implementation</option>
+                                    <option value="Documentation and examples">Documentation and Examples</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Technical Specifications -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Programming Language -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Programming Language/Technology</label>
+                            <select id="coding-language" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                <option value="">Select language/technology...</option>
+                                <option value="JavaScript">JavaScript</option>
+                                <option value="Python">Python</option>
+                                <option value="React">React</option>
+                                <option value="Node.js">Node.js</option>
+                                <option value="Java">Java</option>
+                                <option value="C#">C#</option>
+                                <option value="PHP">PHP</option>
+                                <option value="Go">Go</option>
+                                <option value="TypeScript">TypeScript</option>
+                                <option value="Vue.js">Vue.js</option>
+                                <option value="Angular">Angular</option>
+                                <option value="Swift">Swift</option>
+                                <option value="Kotlin">Kotlin</option>
+                                <option value="Ruby">Ruby</option>
+                                <option value="C++">C++</option>
+                                <option value="Rust">Rust</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Project Type -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Project Type</label>
+                            <select id="coding-project-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                <option value="">Select project type...</option>
+                                <option value="Web application">Web Application</option>
+                                <option value="Mobile app">Mobile App</option>
+                                <option value="API development">API Development</option>
+                                <option value="Desktop application">Desktop Application</option>
+                                <option value="Data analysis">Data Analysis</option>
+                                <option value="Machine learning">Machine Learning</option>
+                                <option value="Game development">Game Development</option>
+                                <option value="DevOps/Infrastructure">DevOps/Infrastructure</option>
+                                <option value="Database design">Database Design</option>
+                                <option value="Microservices">Microservices</option>
+                                <option value="CLI tool">CLI Tool</option>
+                                <option value="Library/Framework">Library/Framework</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Complexity & Requirements -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Complexity Level -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Complexity Level</label>
+                            <select id="coding-complexity" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                <option value="">Select complexity...</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                                <option value="Expert">Expert</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Code Quality Requirements -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Code Quality Requirements</label>
+                            <div class="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="coding-quality" value="Unit tests" class="mr-2">
+                                    Unit Tests
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="coding-quality" value="Documentation" class="mr-2">
+                                    Documentation
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="coding-quality" value="Error handling" class="mr-2">
+                                    Error Handling
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="coding-quality" value="Code comments" class="mr-2">
+                                    Code Comments
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="coding-quality" value="Performance optimization" class="mr-2">
+                                    Performance
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="coding-quality" value="Security best practices" class="mr-2">
+                                    Security
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="coding-quality" value="Clean code principles" class="mr-2">
+                                    Clean Code
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="coding-quality" value="Type safety" class="mr-2">
+                                    Type Safety
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Context -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Additional Context & Constraints</label>
+                        <textarea id="coding-additional" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Any existing codebase details, specific libraries to use, performance requirements, deployment targets, etc..."></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Logo Design Tab -->
+        <div id="logo-design" class="tab-content">
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <span class="mr-2">🎯</span>
+                    Logo Design Prompt Builder
+                </h2>
+                <p class="text-gray-600 mb-6">Generate structured logo design prompts using the CO-STAR framework (Context, Objective, Style, Tone, Audience, Response)</p>
+                
+                <form id="logo-design-form" class="space-y-8">
+                    <!-- CO-STAR Framework Section -->
+                    <div class="bg-yellow-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">🌟 CO-STAR Framework</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Context -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Context</label>
+                                <textarea id="logo-context" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Describe the company, brand, or organization needing the logo..."></textarea>
+                            </div>
+                            
+                            <!-- Objective -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Objective</label>
+                                <textarea id="logo-objective" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" placeholder="What should the logo communicate or achieve?"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <!-- Style Direction -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Style Direction</label>
+                                <select id="logo-style" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                    <option value="">Select style direction...</option>
+                                    <option value="Modern & Minimalist">Modern & Minimalist</option>
+                                    <option value="Classic & Timeless">Classic & Timeless</option>
+                                    <option value="Bold & Dynamic">Bold & Dynamic</option>
+                                    <option value="Elegant & Sophisticated">Elegant & Sophisticated</option>
+                                    <option value="Playful & Creative">Playful & Creative</option>
+                                    <option value="Corporate & Professional">Corporate & Professional</option>
+                                    <option value="Vintage & Retro">Vintage & Retro</option>
+                                    <option value="Tech & Futuristic">Tech & Futuristic</option>
+                                    <option value="Organic & Natural">Organic & Natural</option>
+                                    <option value="Geometric & Abstract">Geometric & Abstract</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Tone -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Tone</label>
+                                <select id="logo-tone" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                    <option value="">Select tone...</option>
+                                    <option value="Professional">Professional</option>
+                                    <option value="Friendly">Friendly</option>
+                                    <option value="Trustworthy">Trustworthy</option>
+                                    <option value="Innovative">Innovative</option>
+                                    <option value="Energetic">Energetic</option>
+                                    <option value="Sophisticated">Sophisticated</option>
+                                    <option value="Approachable">Approachable</option>
+                                    <option value="Premium">Premium</option>
+                                    <option value="Fun">Fun</option>
+                                    <option value="Authoritative">Authoritative</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <!-- Target Audience -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Target Audience</label>
+                                <select id="logo-audience" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                    <option value="">Select target audience...</option>
+                                    <option value="Corporate clients">Corporate Clients</option>
+                                    <option value="Young professionals">Young Professionals</option>
+                                    <option value="General consumers">General Consumers</option>
+                                    <option value="Tech enthusiasts">Tech Enthusiasts</option>
+                                    <option value="Creative professionals">Creative Professionals</option>
+                                    <option value="Small businesses">Small Businesses</option>
+                                    <option value="Luxury market">Luxury Market</option>
+                                    <option value="Health & wellness">Health & Wellness</option>
+                                    <option value="Children & families">Children & Families</option>
+                                    <option value="B2B enterprises">B2B Enterprises</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Response Format -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Response Format</label>
+                                <select id="logo-response" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                    <option value="">Select response format...</option>
+                                    <option value="Detailed logo concepts">Detailed Logo Concepts</option>
+                                    <option value="Brand identity system">Brand Identity System</option>
+                                    <option value="Logo variations and usage">Logo Variations and Usage</option>
+                                    <option value="Design rationale and concept">Design Rationale and Concept</option>
+                                    <option value="Complete brand guidelines">Complete Brand Guidelines</option>
+                                    <option value="Logo design brief">Logo Design Brief</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Logo Specifications -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Industry/Business Type -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Industry/Business Type</label>
+                            <select id="logo-industry" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                <option value="">Select industry...</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Education">Education</option>
+                                <option value="Food & Beverage">Food & Beverage</option>
+                                <option value="Real Estate">Real Estate</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Consulting">Consulting</option>
+                                <option value="Non-profit">Non-profit</option>
+                                <option value="Sports & Fitness">Sports & Fitness</option>
+                                <option value="Beauty & Fashion">Beauty & Fashion</option>
+                                <option value="Travel & Tourism">Travel & Tourism</option>
+                                <option value="Legal">Legal</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Logo Type -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Logo Type</label>
+                            <select id="logo-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                <option value="">Select logo type...</option>
+                                <option value="Wordmark/Logotype">Wordmark/Logotype</option>
+                                <option value="Symbol/Icon mark">Symbol/Icon Mark</option>
+                                <option value="Combination mark">Combination Mark</option>
+                                <option value="Lettermark/Monogram">Lettermark/Monogram</option>
+                                <option value="Badge/Emblem">Badge/Emblem</option>
+                                <option value="Mascot">Mascot</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Visual Elements -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Color Preferences -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Color Preferences</label>
+                            <select id="logo-colors" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                <option value="">Select color scheme...</option>
+                                <option value="Monochrome (black & white)">Monochrome (B&W)</option>
+                                <option value="Blue tones">Blue Tones</option>
+                                <option value="Green tones">Green Tones</option>
+                                <option value="Red tones">Red Tones</option>
+                                <option value="Purple tones">Purple Tones</option>
+                                <option value="Orange tones">Orange Tones</option>
+                                <option value="Gold/Yellow tones">Gold/Yellow Tones</option>
+                                <option value="Earth tones">Earth Tones</option>
+                                <option value="Bright & vibrant">Bright & Vibrant</option>
+                                <option value="Muted & sophisticated">Muted & Sophisticated</option>
+                                <option value="Gradient colors">Gradient Colors</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Typography Style -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Typography Style (if applicable)</label>
+                            <select id="logo-typography" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                <option value="">Select typography...</option>
+                                <option value="Sans-serif modern">Sans-serif Modern</option>
+                                <option value="Serif classic">Serif Classic</option>
+                                <option value="Bold & strong">Bold & Strong</option>
+                                <option value="Elegant script">Elegant Script</option>
+                                <option value="Geometric sans">Geometric Sans</option>
+                                <option value="Handwritten style">Handwritten Style</option>
+                                <option value="Technical/Digital">Technical/Digital</option>
+                                <option value="Vintage typeface">Vintage Typeface</option>
+                                <option value="Custom lettering">Custom Lettering</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Design Elements -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Desired Design Elements</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-32 overflow-y-auto">
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" name="logo-elements" value="Abstract shapes" class="mr-2">
+                                Abstract Shapes
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" name="logo-elements" value="Natural elements" class="mr-2">
+                                Natural Elements
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" name="logo-elements" value="Geometric patterns" class="mr-2">
+                                Geometric Patterns
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" name="logo-elements" value="Animal/Mascot" class="mr-2">
+                                Animal/Mascot
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" name="logo-elements" value="Technology symbols" class="mr-2">
+                                Tech Symbols
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" name="logo-elements" value="Crown/Premium elements" class="mr-2">
+                                Crown/Premium
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" name="logo-elements" value="Arrows/Movement" class="mr-2">
+                                Arrows/Movement
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" name="logo-elements" value="Circular/Badge design" class="mr-2">
+                                Circular/Badge
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" name="logo-elements" value="Building/Architecture" class="mr-2">
+                                Building/Architecture
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Special Requirements -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Special Requirements & Brand Values</label>
+                        <textarea id="logo-requirements" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Company values, specific symbols to include/avoid, scalability requirements, existing brand elements to incorporate..."></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Research & Trending Tab -->
+        <div id="trending" class="tab-content">
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <span class="mr-2">🔥</span>
+                    Research & Trending Prompt Builder
+                </h2>
+                <p class="text-gray-600 mb-6">Generate structured research and trending analysis prompts using comprehensive research methodologies</p>
+                
+                <form id="research-form" class="space-y-8">
+                    <!-- Research Framework Section -->
+                    <div class="bg-red-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Research Framework</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Research Methodology --
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Research Methodology</label>
+                                <select id="research-methodology" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                    <option value="">Select methodology...</option>
+                                    <option value="Quantitative analysis">Quantitative Analysis</option>
+                                    <option value="Qualitative analysis">Qualitative Analysis</option>
+                                    <option value="Mixed methods">Mixed Methods</option>
+                                    <option value="Systematic review">Systematic Review</option>
+                                    <option value="Meta-analysis">Meta-analysis</option>
+                                    <option value="Case study">Case Study</option>
+                                    <option value="Comparative analysis">Comparative Analysis</option>
+                                    <option value="Trend analysis">Trend Analysis</option>
+                                    <option value="Market research">Market Research</option>
+                                    <option value="Academic literature review">Academic Literature Review</option>
+                                    <option value="Empirical research">Empirical Research</option>
+                                    <option value="Experimental design">Experimental Design</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Research Type -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Research Type</label>
+                                <select id="research-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                    <option value="">Select research type...</option>
+                                    <option value="Market trends">Market Trends</option>
+                                    <option value="Industry analysis">Industry Analysis</option>
+                                    <option value="Competitive research">Competitive Research</option>
+                                    <option value="Consumer behavior">Consumer Behavior</option>
+                                    <option value="Technology trends">Technology Trends</option>
+                                    <option value="Scientific research">Scientific Research</option>
+                                    <option value="Social trends">Social Trends</option>
+                                    <option value="Economic analysis">Economic Analysis</option>
+                                    <option value="Policy research">Policy Research</option>
+                                    <option value="Academic research">Academic Research</option>
+                                    <option value="Business intelligence">Business Intelligence</option>
+                                    <option value="Future forecasting">Future Forecasting</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <!-- Research Scope -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Research Scope</label>
+                                <select id="research-scope" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                    <option value="">Select scope...</option>
+                                    <option value="Global perspective">Global Perspective</option>
+                                    <option value="Regional focus">Regional Focus</option>
+                                    <option value="National analysis">National Analysis</option>
+                                    <option value="Local market">Local Market</option>
+                                    <option value="Industry-specific">Industry-specific</option>
+                                    <option value="Cross-industry">Cross-industry</option>
+                                    <option value="B2B focus">B2B Focus</option>
+                                    <option value="B2C focus">B2C Focus</option>
+                                    <option value="Niche market">Niche Market</option>
+                                    <option value="Mass market">Mass Market</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Domain/Field -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Domain/Field</label>
+                                <select id="research-domain" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                    <option value="">Select domain...</option>
+                                    <option value="Technology & AI">Technology & AI</option>
+                                    <option value="Healthcare & Medicine">Healthcare & Medicine</option>
+                                    <option value="Finance & FinTech">Finance & FinTech</option>
+                                    <option value="Education & EdTech">Education & EdTech</option>
+                                    <option value="Retail & E-commerce">Retail & E-commerce</option>
+                                    <option value="Marketing & Advertising">Marketing & Advertising</option>
+                                    <option value="Sustainability & Environment">Sustainability & Environment</option>
+                                    <option value="Social Media & Digital">Social Media & Digital</option>
+                                    <option value="Automotive & Mobility">Automotive & Mobility</option>
+                                    <option value="Real Estate & Construction">Real Estate & Construction</option>
+                                    <option value="Food & Beverage">Food & Beverage</option>
+                                    <option value="Entertainment & Media">Entertainment & Media</option>
+                                    <option value="Travel & Tourism">Travel & Tourism</option>
+                                    <option value="Energy & Utilities">Energy & Utilities</option>
+                                    <option value="Manufacturing & Supply Chain">Manufacturing & Supply Chain</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Research Specifications -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Research Question/Topic -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Research Question/Topic</label>
+                            <textarea id="research-question" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Enter your specific research question or topic area..."></textarea>
+                        </div>
+                        
+                        <!-- Research Depth -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Research Depth</label>
+                            <select id="research-depth" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                <option value="">Select depth level...</option>
+                                <option value="Surface-level overview">Surface-level Overview</option>
+                                <option value="Moderate depth analysis">Moderate Depth Analysis</option>
+                                <option value="In-depth comprehensive">In-depth Comprehensive</option>
+                                <option value="Expert-level detailed">Expert-level Detailed</option>
+                                <option value="Academic rigor">Academic Rigor</option>
+                                <option value="Executive summary">Executive Summary</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Sources & Analysis -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Primary Data Sources -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Primary Data Sources</label>
+                            <div class="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="Academic journals" class="mr-2">
+                                    Academic Journals
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="Industry reports" class="mr-2">
+                                    Industry Reports
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="Market research" class="mr-2">
+                                    Market Research
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="Government data" class="mr-2">
+                                    Government Data
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="News & media" class="mr-2">
+                                    News & Media
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="Company reports" class="mr-2">
+                                    Company Reports
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="Social media data" class="mr-2">
+                                    Social Media
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="Survey data" class="mr-2">
+                                    Survey Data
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="Patent databases" class="mr-2">
+                                    Patent Databases
+                                </label>
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" name="data-sources" value="Expert interviews" class="mr-2">
+                                    Expert Interviews
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Output Format -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Output Format</label>
+                            <select id="research-output" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                <option value="">Select output format...</option>
+                                <option value="Executive summary">Executive Summary</option>
+                                <option value="Detailed research report">Detailed Research Report</option>
+                                <option value="Key findings & insights">Key Findings & Insights</option>
+                                <option value="Trend analysis with predictions">Trend Analysis with Predictions</option>
+                                <option value="Comparative analysis">Comparative Analysis</option>
+                                <option value="SWOT analysis">SWOT Analysis</option>
+                                <option value="Market opportunity assessment">Market Opportunity Assessment</option>
+                                <option value="Academic paper format">Academic Paper Format</option>
+                                <option value="Business presentation">Business Presentation</option>
+                                <option value="Infographic data points">Infographic Data Points</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Frame & Audience -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Time Frame -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Time Frame & Period</label>
+                            <select id="research-timeframe" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                <option value="">Select time frame...</option>
+                                <option value="Current/Real-time">Current/Real-time</option>
+                                <option value="Last 6 months">Last 6 Months</option>
+                                <option value="Last 12 months">Last 12 Months</option>
+                                <option value="Last 2-3 years">Last 2-3 Years</option>
+                                <option value="5-year historical">5-year Historical</option>
+                                <option value="10-year trend analysis">10-year Trend Analysis</option>
+                                <option value="Future projections (1-2 years)">Future Projections (1-2 years)</option>
+                                <option value="Future projections (3-5 years)">Future Projections (3-5 years)</option>
+                                <option value="Long-term forecasting (5-10 years)">Long-term Forecasting (5-10 years)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Target Audience -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Target Audience</label>
+                            <select id="research-audience" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                <option value="">Select target audience...</option>
+                                <option value="Business executives">Business Executives</option>
+                                <option value="Investment analysts">Investment Analysts</option>
+                                <option value="Academic researchers">Academic Researchers</option>
+                                <option value="Policy makers">Policy Makers</option>
+                                <option value="Industry professionals">Industry Professionals</option>
+                                <option value="Entrepreneurs & startups">Entrepreneurs & Startups</option>
+                                <option value="Marketing teams">Marketing Teams</option>
+                                <option value="Product managers">Product Managers</option>
+                                <option value="Consultants">Consultants</option>
+                                <option value="General business audience">General Business Audience</option>
+                                <option value="Technical specialists">Technical Specialists</option>
+                                <option value="Media & journalists">Media & Journalists</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Research Context -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Additional Research Context & Objectives</label>
+                        <textarea id="research-context" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Specify additional context, research objectives, key metrics to track, specific companies/competitors to include, geographical focus, or any other relevant details..."></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Generate Button -->
+        <div class="text-center mt-8">
+            <button id="generate-btn" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                🚀 Generate Monster Prompt
+            </button>
+        </div>
+
+        <!-- Output Section -->
+        <div id="output-section" class="mt-8 hidden animate-slide-up">
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-8 border-l-4 border-green-500">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">🎯 Your Monster Prompt</h3>
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <pre id="generated-prompt" class="whitespace-pre-wrap text-sm text-gray-800 font-mono"></pre>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="copy-btn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+                        <span class="mr-2">📋</span>
+                        Copy to Clipboard
+                    </button>
+                    <button id="regenerate-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+                        <span class="mr-2">🔄</span>
+                        Regenerate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-300">
+                © 2025 Monster Prompt Generator. Transform your AI interactions with expert-level prompts.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/tabs.js"></script>
+    <script src="assets/js/prompt-generator.js"></script>
+    <script src="assets/js/image-previews.js"></script>
+</body>
+</html>
