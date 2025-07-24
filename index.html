@@ -17,6 +17,8 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/user-customization.css">
     <style>
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -1416,10 +1418,15 @@
 
         <!-- Output Section -->
         <div id="output-section" class="mt-8 hidden animate-slide-up">
-            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-8 border-l-4 border-green-500">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">🎯 Your Monster Prompt</h3>
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-8 border-l-4 border-green-500 prompt-container" data-prompt-id="">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">🎯 Your Monster Prompt</h3>
+                    <button class="favorite-btn" title="Add to Favorites">
+                        ★
+                    </button>
+                </div>
                 <div class="bg-gray-50 rounded-lg p-4 mb-4">
-                    <pre id="generated-prompt" class="whitespace-pre-wrap text-sm text-gray-800 font-mono"></pre>
+                    <pre id="generated-prompt" class="whitespace-pre-wrap text-sm text-gray-800 font-mono prompt-text"></pre>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button id="copy-btn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200 flex items-center justify-center">
@@ -1430,9 +1437,112 @@
                         <span class="mr-2">🔄</span>
                         Regenerate
                     </button>
+                    <button id="save-template-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+                        <span class="mr-2">💾</span>
+                        Save as Template
+                    </button>
                 </div>
             </div>
         </div>
+
+        <!-- User Customization Panel -->
+        <div id="customization-panel" class="customization-panel">
+            <div class="customization-header">
+                <h3>Customization Settings</h3>
+                <button id="close-customization" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            <div class="customization-content">
+                <!-- Theme Settings -->
+                <div class="customization-section">
+                    <h4>Theme</h4>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Toggle Dark/Light Mode</span>
+                        <button id="theme-toggle" class="theme-toggle" title="Toggle Dark Mode">
+                            🌙
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Layout Settings -->
+                <div class="customization-section">
+                    <h4>Layout</h4>
+                    <div class="layout-options">
+                        <label class="layout-option">
+                            <input type="radio" name="layout-option" value="default" checked>
+                            <div class="layout-option-label">
+                                <div class="layout-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </div>
+                                <span class="layout-name">Default</span>
+                            </div>
+                        </label>
+                        <label class="layout-option">
+                            <input type="radio" name="layout-option" value="compact">
+                            <div class="layout-option-label">
+                                <div class="layout-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                                    </svg>
+                                </div>
+                                <span class="layout-name">Compact</span>
+                            </div>
+                        </label>
+                        <label class="layout-option">
+                            <input type="radio" name="layout-option" value="expanded">
+                            <div class="layout-option-label">
+                                <div class="layout-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                    </svg>
+                                </div>
+                                <span class="layout-name">Expanded</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Custom Templates -->
+                <div class="customization-section">
+                    <h4>Custom Templates</h4>
+                    <div class="template-form">
+                        <input type="text" id="template-name" class="form-input" placeholder="Template name">
+                        <button id="save-template-btn" class="btn btn-primary">Save</button>
+                    </div>
+                    <div id="templates-container" class="templates-container">
+                        <p class="text-gray-500 text-center py-4">No custom templates yet</p>
+                    </div>
+                </div>
+
+                <!-- Favorites -->
+                <div class="customization-section">
+                    <h4>Favorite Prompts</h4>
+                    <div id="favorites-container" class="favorites-container">
+                        <p class="text-gray-500 text-center py-4">No favorites yet</p>
+                    </div>
+                </div>
+
+                <!-- Default Settings -->
+                <div class="customization-section">
+                    <h4>Default Settings</h4>
+                    <p class="text-sm text-gray-600 mb-3">Save or apply default settings for the current prompt category.</p>
+                    <div class="default-settings-actions">
+                        <button id="save-defaults-btn" class="btn btn-primary">Save as Default</button>
+                        <button id="apply-defaults-btn" class="btn btn-secondary">Apply Defaults</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customization Toggle Button -->
+        <button id="customization-toggle" class="customization-toggle" title="Customization Settings">
+            ⚙️
+        </button>
     </main>
 
     <!-- Footer -->
@@ -1449,5 +1559,8 @@
     <script src="assets/js/tabs.js"></script>
     <script src="assets/js/prompt-generator.js"></script>
     <script src="assets/js/image-previews.js"></script>
+    <script src="assets/js/trending-prompts.js"></script>
+    <script src="assets/js/user-preferences.js"></script>
+    <script src="assets/js/export-import.js"></script>
 </body>
 </html>
