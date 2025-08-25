@@ -4,6 +4,25 @@ class MonsterPromptGenerator {
     constructor() {
         this.currentTab = 'image-generation';
         this.generatedPrompts = [];
+        this.promptPrinciples = this.initializePromptPrinciples();
+    }
+
+    // Initialize core prompt engineering principles
+    initializePromptPrinciples() {
+        return {
+            general: {
+                clarity: 'Use clear, specific language avoiding vague terms',
+                context: 'Provide relevant background information',
+                rolePlay: 'Assign specific persona or expertise to AI',
+                outputFormat: 'Specify desired response format',
+                constraints: 'Define limitations and exclusions',
+                examples: 'Provide input-output examples when needed',
+                iteration: 'Be prepared to refine based on results',
+                breakdown: 'Divide complex tasks into manageable steps'
+            },
+            chainOfThought: 'Think step by step and explain your reasoning',
+            iterativeImprovement: 'Draft, critique, and improve based on feedback'
+        };
     }
 
     // Generate prompt based on current tab
@@ -34,7 +53,7 @@ class MonsterPromptGenerator {
         return activeTab ? activeTab.dataset.tab : 'image-generation';
     }
 
-    // Generate Image Generation Prompt
+    // Generate Enhanced Image Generation Prompt
     generateImagePrompt() {
         const form = document.getElementById('image-generation');
         if (!form) return null;
@@ -59,13 +78,17 @@ class MonsterPromptGenerator {
         const selectedStyles = this.getSelectedMultiSelectValues('style-buttons');
         const selectedLighting = this.getSelectedMultiSelectValues('lighting-buttons');
 
-        // Build prompt sections
+        // Build enhanced prompt sections with comprehensive fields
         const sections = {
             subject: this.buildSubjectSection(data),
+            details: this.buildDetailsSection(data),
             style: this.buildStyleSection(selectedStyles, data),
             lighting: this.buildLightingSection(selectedLighting),
+            mood: this.buildMoodSection(data),
+            framing: this.buildFramingSection(data),
             camera: this.buildCameraSection(data),
             composition: this.buildCompositionSection(data),
+            colors: this.buildColorSection(data),
             technical: this.buildTechnicalSection(data),
             character: this.buildCharacterSection(data),
             quality: this.buildQualitySection(data),
@@ -79,115 +102,224 @@ class MonsterPromptGenerator {
         return this.validatePrompt(prompt) ? prompt : null;
     }
 
-    // Build subject section
+    // Build enhanced subject section with specificity
     buildSubjectSection(data) {
-        const subject = data.subject || '';
+        let subject = data.subject || '';
         const action = data.action || '';
         const setting = data.setting || '';
+        const customSubject = document.getElementById('custom-subject')?.value || '';
+        const customAction = document.getElementById('custom-action')?.value || '';
+        
+        // Use custom inputs if provided
+        if (customSubject) subject = customSubject;
+        const finalAction = customAction || action;
 
+        // Build detailed subject description
         let section = subject;
-        if (action) section += ` ${action}`;
+        if (finalAction) section += ` ${finalAction}`;
         if (setting) section += ` in ${setting}`;
+        
+        // Add specificity enhancement
+        if (section && !section.includes('detailed') && !section.includes('specific')) {
+            section += ', highly detailed and specific';
+        }
 
         return section.trim();
     }
 
-    // Build style section
+    // Build details/modifiers section
+    buildDetailsSection(data) {
+        const details = [];
+        
+        // Add descriptive modifiers
+        if (data.texture) details.push(`${data.texture} texture`);
+        if (data.material) details.push(`made of ${data.material}`);
+        if (data.age) details.push(`${data.age} appearance`);
+        if (data.condition) details.push(`${data.condition} condition`);
+        
+        return details.join(', ');
+    }
+
+    // Build mood/emotion section
+    buildMoodSection(data) {
+        const mood = data.mood || '';
+        const emotion = data.emotion || '';
+        const atmosphere = data.atmosphere || '';
+        
+        const moodElements = [mood, emotion, atmosphere].filter(Boolean);
+        return moodElements.length > 0 ? moodElements.join(', ') + ' atmosphere' : '';
+    }
+
+    // Build framing/composition section
+    buildFramingSection(data) {
+        const framing = [];
+        
+        if (data.shot_type) framing.push(data.shot_type);
+        if (data.angle) framing.push(data.angle);
+        if (data.perspective) framing.push(data.perspective);
+        
+        return framing.join(', ');
+    }
+
+    // Build color section
+    buildColorSection(data) {
+        const colors = [];
+        
+        if (data.color_scheme) colors.push(`${data.color_scheme} color scheme`);
+        if (data.dominant_color) colors.push(`dominant ${data.dominant_color}`);
+        if (data.color_temperature) colors.push(`${data.color_temperature} tones`);
+        
+        return colors.join(', ');
+    }
+    // Build enhanced style section
     buildStyleSection(selectedStyles, data) {
         const mainStyle = data.style || '';
         const styles = [mainStyle, ...selectedStyles].filter(Boolean);
         
         if (styles.length === 0) return '';
         
-        return styles.join(', ');
+        // Add art form specification
+        let styleSection = styles.join(', ');
+        
+        // Enhance with art form details
+        if (styleSection && !styleSection.includes('style')) {
+            styleSection += ' style';
+        }
+        
+        // Add trending keywords for better results
+        if (styleSection.includes('digital') || styleSection.includes('art')) {
+            styleSection += ', trending on ArtStation';
+        }
+        
+        return styleSection;
     }
 
-    // Build lighting section
+    // Build enhanced lighting section
     buildLightingSection(selectedLighting) {
         if (selectedLighting.length === 0) return '';
-        return selectedLighting.join(', ');
+        
+        let lightingSection = selectedLighting.join(', ');
+        
+        // Add lighting quality descriptors
+        if (lightingSection && !lightingSection.includes('lighting')) {
+            lightingSection += ' lighting';
+        }
+        
+        return lightingSection;
     }
 
-    // Build camera section
+    // Build enhanced camera section
     buildCameraSection(data) {
         const elements = [];
         
-        if (data.camera_angle) elements.push(data.camera_angle);
-        if (data.camera_shot) elements.push(data.camera_shot);
-        if (data.lens) elements.push(`shot with ${data.lens}`);
+        // Get camera settings from form
+        const shotView = document.getElementById('shot-view')?.value;
+        const lensType = document.getElementById('lens-type')?.value;
+        
+        if (shotView && shotView !== '') elements.push(shotView);
+        if (lensType && lensType !== '') elements.push(`shot with ${lensType}`);
+        
+        // Add camera quality descriptors
+        if (elements.length > 0) {
+            elements.push('professional photography');
+        }
         
         return elements.join(', ');
     }
 
-    // Build composition section
+    // Build enhanced composition section
     buildCompositionSection(data) {
         const elements = [];
         
         if (data.composition) elements.push(data.composition);
         if (data.depth_of_field) elements.push(data.depth_of_field);
+        if (data.focus_point) elements.push(`focus on ${data.focus_point}`);
         
         return elements.join(', ');
     }
 
-    // Build technical section
+    // Build enhanced technical section
     buildTechnicalSection(data) {
         const technical = [];
         
-        if (data.resolution) technical.push(data.resolution);
-        if (data.render_engine) technical.push(`rendered in ${data.render_engine}`);
+        // Add quality enhancers
+        technical.push('ultra detailed', 'highly detailed', 'sharp focus');
+        
+        // Add resolution if specified
+        const aspectRatio = document.getElementById('aspect-ratio')?.value;
+        if (aspectRatio && aspectRatio !== '') {
+            // This will be handled in quality section as --ar parameter
+        }
+        
+        // Add render quality
+        technical.push('professional quality', '8k resolution');
         
         return technical.join(', ');
     }
 
-    // Build character reference section
+    // Build enhanced character reference section
     buildCharacterSection(data) {
-        const charRef = data.character_reference;
-        const charWeight = data.character_weight || '100';
+        const charRef = document.getElementById('cref-url')?.value;
+        const charWeight = document.getElementById('char-weight')?.value || '100';
         
         if (!charRef) return '';
         
         return `--cref ${charRef} --cw ${charWeight}`;
     }
 
-    // Build quality section
+    // Build enhanced quality section with parameters
     buildQualitySection(data) {
-        const quality = data.quality || '';
-        const version = data.version || 'v6';
-        
-        const qualityMap = {
-            'standard': '--q 1',
-            'high': '--q 2',
-            'ultra': '--q 2'
-        };
-
         const params = [];
-        if (quality && qualityMap[quality]) {
-            params.push(qualityMap[quality]);
-        }
-        params.push(`--${version}`);
         
+        // Add version (default to v6)
+        params.push('--v6');
+        
+        // Add aspect ratio
+        const aspectRatio = document.getElementById('aspect-ratio')?.value;
+        if (aspectRatio && aspectRatio !== '') {
+            params.push(`--ar ${aspectRatio}`);
+        }
+        
+        // Add quality setting
+        params.push('--q 2');
+        
+        // Add style parameter for better consistency
+        params.push('--style raw');
+
         return params.join(' ');
     }
 
-    // Build negative prompts section
+    // Build enhanced negative prompts section
     buildNegativeSection(data) {
-        const negative = data.negative_prompts || '';
-        if (!negative) return '';
+        const customNegative = document.getElementById('negative-prompt')?.value || '';
+        const defaultNegatives = [
+            'blurry', 'low quality', 'distorted', 'deformed', 
+            'bad anatomy', 'watermark', 'signature', 'text'
+        ];
         
-        return `--no ${negative}`;
+        let negatives = [...defaultNegatives];
+        if (customNegative) {
+            negatives.push(...customNegative.split(',').map(n => n.trim()));
+        }
+        
+        return negatives.length > 0 ? `--no ${negatives.join(', ')}` : '';
     }
 
-    // Assemble final image prompt
+    // Assemble enhanced final image prompt
     assembleImagePrompt(sections) {
         const promptParts = [];
         
         // Main description
         const mainDescription = [
             sections.subject,
+            sections.details,
             sections.style,
             sections.lighting,
+            sections.mood,
+            sections.framing,
             sections.camera,
             sections.composition,
+            sections.colors,
             sections.technical
         ].filter(Boolean).join(', ');
         
@@ -216,7 +348,7 @@ class MonsterPromptGenerator {
         return Array.from(selectedButtons).map(btn => btn.textContent.trim());
     }
 
-    // Generate Writing Prompt (RACE Framework)
+    // Generate Enhanced Writing Prompt (RACE Framework)
     generateWritingPrompt() {
         const form = document.getElementById('writing');
         if (!form) return null;
@@ -224,7 +356,7 @@ class MonsterPromptGenerator {
         const formData = new FormData(form);
         const data = this.extractFormData(formData);
 
-        // Build RACE framework prompt
+        // Build enhanced RACE framework prompt with comprehensive fields
         const sections = {
             role: data.role || 'Expert Writer',
             action: data.action || 'Create content',
@@ -232,21 +364,29 @@ class MonsterPromptGenerator {
             expectation: data.expectation || 'High quality output'
         };
 
-        // Additional details
+        // Enhanced additional details
         const details = {
             topic: data.topic || '',
+            goal: data.goal || '',
+            targetAudience: data.target_audience || '',
             wordCount: data.word_count || '',
             style: data.style || '',
-            audience: data.audience || '',
             tone: data.tone || '',
-            format: data.format || ''
+            format: data.format || '',
+            language: data.language || '',
+            constraints: data.constraints || '',
+            examples: data.examples || '',
+            background: data.background || '',
+            exclusions: data.exclusions || '',
+            chainOfThought: data.chain_of_thought === 'true',
+            iterativeImprovement: data.iterative_improvement === 'true'
         };
 
         const prompt = this.assembleWritingPrompt(sections, details);
         return this.validatePrompt(prompt) ? prompt : null;
     }
 
-    // Generate Web Design Prompt (CO-STAR Framework)
+    // Generate Enhanced Web Design Prompt (CO-STAR Framework)
     generateWebDesignPrompt() {
         const form = document.getElementById('web-design');
         if (!form) return null;
@@ -254,7 +394,7 @@ class MonsterPromptGenerator {
         const formData = new FormData(form);
         const data = this.extractFormData(formData);
 
-        // Build CO-STAR framework prompt
+        // Build enhanced CO-STAR framework prompt
         const sections = {
             context: data.context || 'Modern website',
             objective: data.objective || 'Create engaging user experience',
@@ -264,8 +404,17 @@ class MonsterPromptGenerator {
             response: data.response || 'Responsive design'
         };
 
-        // Additional details
+        // Enhanced additional details for web design
         const details = {
+            pageSection: data.page_section || '',
+            purpose: data.purpose || '',
+            keyElements: data.key_elements || '',
+            visualAesthetics: data.visual_aesthetics || '',
+            colorPalette: data.color_palette || '',
+            industryType: data.industry_type || '',
+            placement: data.placement || '',
+            uxOptimization: data.ux_optimization || '',
+            accessibility: data.accessibility || '',
             websiteType: data.website_type || '',
             features: data.features || '',
             colors: data.colors || '',
@@ -277,7 +426,7 @@ class MonsterPromptGenerator {
         return this.validatePrompt(prompt) ? prompt : null;
     }
 
-    // Generate Coding Prompt (CRISPE Framework)
+    // Generate Enhanced Coding Prompt (CRISPE Framework)
     generateCodingPrompt() {
         const form = document.getElementById('coding');
         if (!form) return null;
@@ -285,7 +434,7 @@ class MonsterPromptGenerator {
         const formData = new FormData(form);
         const data = this.extractFormData(formData);
 
-        // Build CRISPE framework prompt
+        // Build enhanced CRISPE framework prompt
         const sections = {
             capacity: data.capacity || 'Senior Developer',
             role: data.role || 'Problem solver',
@@ -295,20 +444,29 @@ class MonsterPromptGenerator {
             experiment: data.experiment || 'Test thoroughly'
         };
 
-        // Additional details
+        // Enhanced additional details for coding
         const details = {
+            functionality: data.functionality || '',
             language: data.language || '',
+            framework: data.framework || '',
+            keyRequirements: data.key_requirements || '',
+            codeStructure: data.code_structure || '',
+            outputDetails: data.output_details || '',
+            existingCode: data.existing_code || '',
+            security: data.security || '',
             projectType: data.project_type || '',
             requirements: data.requirements || '',
-            framework: data.framework || '',
-            complexity: data.complexity || ''
+            complexity: data.complexity || '',
+            errorHandling: data.error_handling || '',
+            performance: data.performance || '',
+            testing: data.testing || ''
         };
 
         const prompt = this.assembleCodingPrompt(sections, details);
         return this.validatePrompt(prompt) ? prompt : null;
     }
 
-    // Generate Logo Design Prompt (CO-STAR Framework)
+    // Generate Enhanced Logo Design Prompt (CO-STAR Framework)
     generateLogoPrompt() {
         const form = document.getElementById('logo-design');
         if (!form) return null;
@@ -316,7 +474,7 @@ class MonsterPromptGenerator {
         const formData = new FormData(form);
         const data = this.extractFormData(formData);
 
-        // Build CO-STAR framework prompt
+        // Build enhanced CO-STAR framework prompt for logo design
         const sections = {
             context: data.context || 'Modern business',
             objective: data.objective || 'Create memorable brand identity',
@@ -326,20 +484,29 @@ class MonsterPromptGenerator {
             response: data.response || 'Scalable vector design'
         };
 
-        // Additional details
+        // Enhanced additional details for logo design
         const details = {
+            companyName: data.company_name || '',
             industry: data.industry || '',
+            coreValues: data.core_values || '',
+            visualStyle: data.visual_style || '',
+            imagery: data.imagery || '',
+            colorScheme: data.color_scheme || '',
+            fontStyle: data.font_style || '',
+            application: data.application || '',
             logoType: data.logo_type || '',
             colors: data.colors || '',
             typography: data.typography || '',
-            elements: data.design_elements || ''
+            elements: data.design_elements || '',
+            symbolism: data.symbolism || '',
+            competitors: data.competitors || ''
         };
 
         const prompt = this.assembleLogoPrompt(sections, details);
         return this.validatePrompt(prompt) ? prompt : null;
     }
 
-    // Generate Research & Trending Prompt
+    // Generate Enhanced Research & Trending Prompt
     generateResearchPrompt() {
         const form = document.getElementById('research-trending');
         if (!form) return null;
@@ -347,8 +514,13 @@ class MonsterPromptGenerator {
         const formData = new FormData(form);
         const data = this.extractFormData(formData);
 
-        // Build Research framework prompt
+        // Build enhanced Research framework prompt
         const sections = {
+            centralConcept: data.central_concept || '',
+            desiredOutput: data.desired_output || '',
+            rolePlay: data.role_play || '',
+            specificViewpoints: data.specific_viewpoints || '',
+            timeAnchoredRole: data.time_anchored_role || '',
             methodology: data.methodology || 'Systematic approach',
             researchType: data.research_type || 'Comprehensive analysis',
             scope: data.scope || 'Focused investigation',
@@ -356,8 +528,17 @@ class MonsterPromptGenerator {
             depth: data.depth || 'Thorough examination'
         };
 
-        // Additional details
+        // Enhanced additional details for research
         const details = {
+            dilemmaScenario: data.dilemma_scenario || '',
+            breakdownElements: data.breakdown_elements || '',
+            evidenceSupport: data.evidence_support || '',
+            clarityQuestion: data.clarity_question || '',
+            webSearch: data.web_search || '',
+            criticalThinking: data.critical_thinking || '',
+            decomposition: data.decomposition || '',
+            reflection: data.reflection || '',
+            iterativeLearning: data.iterative_learning || '',
             dataSources: data.data_sources || '',
             outputFormat: data.output_format || '',
             timeframe: data.timeframe || '',
