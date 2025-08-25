@@ -567,19 +567,39 @@ class MonsterPromptGenerator {
         return data;
     }
 
-    // Assemble Writing Prompt (RACE Framework)
+    // Assemble Enhanced Writing Prompt (RACE Framework)
     assembleWritingPrompt(sections, details) {
         const parts = [];
         
         // Role
         parts.push(`**Role:** Act as a ${sections.role}`);
         
+        // Add chain-of-thought if requested
+        if (details.chainOfThought) {
+            parts.push(`**Approach:** Think step by step and explain your reasoning process`);
+        }
+        
         // Action & Context
         parts.push(`**Task:** ${sections.action} for ${sections.context}`);
+        
+        // Goal/Purpose
+        if (details.goal) {
+            parts.push(`**Goal:** ${details.goal}`);
+        }
         
         // Topic and specifics
         if (details.topic) {
             parts.push(`**Topic:** ${details.topic}`);
+        }
+        
+        // Target Audience (enhanced)
+        if (details.targetAudience) {
+            parts.push(`**Target Audience:** ${details.targetAudience}`);
+        }
+        
+        // Background/Context
+        if (details.background) {
+            parts.push(`**Background Information:** ${details.background}`);
         }
         
         if (details.wordCount) {
@@ -590,33 +610,84 @@ class MonsterPromptGenerator {
             parts.push(`**Style:** ${details.style}`);
         }
         
-        if (details.audience) {
-            parts.push(`**Target Audience:** ${details.audience}`);
-        }
-        
         if (details.tone) {
             parts.push(`**Tone:** ${details.tone}`);
+        }
+        
+        if (details.language) {
+            parts.push(`**Language/Terminology:** ${details.language}`);
         }
         
         if (details.format) {
             parts.push(`**Format:** ${details.format}`);
         }
         
+        // Constraints and exclusions
+        if (details.constraints) {
+            parts.push(`**Constraints:** ${details.constraints}`);
+        }
+        
+        if (details.exclusions) {
+            parts.push(`**Exclusions:** ${details.exclusions}`);
+        }
+        
+        // Examples if provided
+        if (details.examples) {
+            parts.push(`**Examples/References:** ${details.examples}`);
+        }
+        
         // Expectation
         parts.push(`**Expectation:** The output should be ${sections.expectation}`);
+        
+        // Add iterative improvement instruction if requested
+        if (details.iterativeImprovement) {
+            parts.push(`**Process:** Draft your response, then critique it, and provide an improved version based on your critique`);
+        }
         
         return parts.join('\n\n');
     }
 
-    // Assemble Web Design Prompt (CO-STAR Framework)
+    // Assemble Enhanced Web Design Prompt (CO-STAR Framework)
     assembleWebDesignPrompt(sections, details) {
         const parts = [];
         
         parts.push(`**Context:** Design a ${sections.context}`);
         parts.push(`**Objective:** ${sections.objective}`);
+        
+        // Enhanced page/section focus
+        if (details.pageSection) {
+            parts.push(`**Page/Section Focus:** ${details.pageSection}`);
+        }
+        
+        // Purpose/Goal
+        if (details.purpose) {
+            parts.push(`**Purpose:** ${details.purpose}`);
+        }
+        
+        // Key elements to include
+        if (details.keyElements) {
+            parts.push(`**Key Elements:** ${details.keyElements}`);
+        }
+        
         parts.push(`**Style:** ${sections.style}`);
+        
+        // Visual aesthetics
+        if (details.visualAesthetics) {
+            parts.push(`**Visual Aesthetics:** ${details.visualAesthetics}`);
+        }
+        
+        // Color palette
+        if (details.colorPalette) {
+            parts.push(`**Color Palette:** ${details.colorPalette}`);
+        }
+        
         parts.push(`**Tone:** ${sections.tone}`);
         parts.push(`**Audience:** ${sections.audience}`);
+        
+        // Industry/Business type
+        if (details.industryType) {
+            parts.push(`**Industry/Business Type:** ${details.industryType}`);
+        }
         
         if (details.websiteType) {
             parts.push(`**Website Type:** ${details.websiteType}`);
@@ -638,12 +709,27 @@ class MonsterPromptGenerator {
             parts.push(`**Pages:** ${details.pages}`);
         }
         
+        // Placement/Application
+        if (details.placement) {
+            parts.push(`**Placement/Application:** ${details.placement}`);
+        }
+        
+        // UX Optimization
+        if (details.uxOptimization) {
+            parts.push(`**UX Optimization:** ${details.uxOptimization}`);
+        }
+        
+        // Accessibility
+        if (details.accessibility) {
+            parts.push(`**Accessibility:** ${details.accessibility}`);
+        }
+        
         parts.push(`**Expected Response:** ${sections.response}`);
         
         return parts.join('\n\n');
     }
 
-    // Assemble Coding Prompt (CRISPE Framework)
+    // Assemble Enhanced Coding Prompt (CRISPE Framework)
     assembleCodingPrompt(sections, details) {
         const parts = [];
         
@@ -653,8 +739,27 @@ class MonsterPromptGenerator {
         parts.push(`**Statement:** ${sections.statement}`);
         parts.push(`**Personality:** Approach this with a ${sections.personality} mindset`);
         
+        // Specific functionality
+        if (details.functionality) {
+            parts.push(`**Specific Functionality:** ${details.functionality}`);
+        }
+        
         if (details.language) {
             parts.push(`**Programming Language:** ${details.language}`);
+        }
+        
+        if (details.framework) {
+            parts.push(`**Framework/Library:** ${details.framework}`);
+        }
+        
+        // Key requirements
+        if (details.keyRequirements) {
+            parts.push(`**Key Requirements:** ${details.keyRequirements}`);
+        }
+        
+        // Code structure requirements
+        if (details.codeStructure) {
+            parts.push(`**Code Structure:** ${details.codeStructure}`);
         }
         
         if (details.projectType) {
@@ -665,12 +770,38 @@ class MonsterPromptGenerator {
             parts.push(`**Requirements:** ${details.requirements}`);
         }
         
-        if (details.framework) {
-            parts.push(`**Framework/Library:** ${details.framework}`);
-        }
-        
         if (details.complexity) {
             parts.push(`**Complexity Level:** ${details.complexity}`);
+        }
+        
+        // Error handling
+        if (details.errorHandling) {
+            parts.push(`**Error Handling:** ${details.errorHandling}`);
+        }
+        
+        // Performance considerations
+        if (details.performance) {
+            parts.push(`**Performance:** ${details.performance}`);
+        }
+        
+        // Security requirements
+        if (details.security) {
+            parts.push(`**Security:** ${details.security}`);
+        }
+        
+        // Testing requirements
+        if (details.testing) {
+            parts.push(`**Testing:** ${details.testing}`);
+        }
+        
+        // Output details
+        if (details.outputDetails) {
+            parts.push(`**Output Details:** ${details.outputDetails}`);
+        }
+        
+        // Existing code (for optimization/testing)
+        if (details.existingCode) {
+            parts.push(`**Existing Code:**\n\`\`\`\n${details.existingCode}\n\`\`\``);
         }
         
         parts.push(`**Experiment:** ${sections.experiment}`);
@@ -678,26 +809,59 @@ class MonsterPromptGenerator {
         return parts.join('\n\n');
     }
 
-    // Assemble Logo Design Prompt (CO-STAR Framework)
+    // Assemble Enhanced Logo Design Prompt (CO-STAR Framework)
     assembleLogoPrompt(sections, details) {
         const parts = [];
         
         parts.push(`**Context:** Design a logo for ${sections.context}`);
         parts.push(`**Objective:** ${sections.objective}`);
+        
+        // Company name
+        if (details.companyName) {
+            parts.push(`**Company Name:** ${details.companyName}`);
+        }
+        
+        // Industry/Business type
+        if (details.industry) {
+            parts.push(`**Industry/Business Type:** ${details.industry}`);
+        }
+        
+        // Core values/concept
+        if (details.coreValues) {
+            parts.push(`**Core Values/Concept:** ${details.coreValues}`);
+        }
+        
         parts.push(`**Style:** ${sections.style}`);
+        
+        // Visual style/aesthetic
+        if (details.visualStyle) {
+            parts.push(`**Visual Style/Aesthetic:** ${details.visualStyle}`);
+        }
+        
+        // Imagery/Elements
+        if (details.imagery) {
+            parts.push(`**Imagery/Elements:** ${details.imagery}`);
+        }
+        
         parts.push(`**Tone:** ${sections.tone}`);
         parts.push(`**Audience:** ${sections.audience}`);
-        
-        if (details.industry) {
-            parts.push(`**Industry:** ${details.industry}`);
-        }
         
         if (details.logoType) {
             parts.push(`**Logo Type:** ${details.logoType}`);
         }
         
+        // Color scheme/hues
+        if (details.colorScheme) {
+            parts.push(`**Color Scheme/Hues:** ${details.colorScheme}`);
+        }
+        
         if (details.colors) {
             parts.push(`**Color Palette:** ${details.colors}`);
+        }
+        
+        // Font style
+        if (details.fontStyle) {
+            parts.push(`**Font Style:** ${details.fontStyle}`);
         }
         
         if (details.typography) {
@@ -708,20 +872,76 @@ class MonsterPromptGenerator {
             parts.push(`**Design Elements:** ${details.elements}`);
         }
         
+        // Application/Usage
+        if (details.application) {
+            parts.push(`**Application/Usage:** ${details.application}`);
+        }
+        
+        // Symbolism
+        if (details.symbolism) {
+            parts.push(`**Symbolism:** ${details.symbolism}`);
+        }
+        
+        // Competitor analysis
+        if (details.competitors) {
+            parts.push(`**Competitor Considerations:** ${details.competitors}`);
+        }
+        
         parts.push(`**Expected Response:** ${sections.response}`);
+        parts.push(`**Note:** Provide multiple concept variations and be prepared for iteration and refinement`);
         
         return parts.join('\n\n');
     }
 
-    // Assemble Research Prompt
+    // Assemble Enhanced Research Prompt
     assembleResearchPrompt(sections, details) {
         const parts = [];
+        
+        // Central concept/topic
+        if (sections.centralConcept) {
+            parts.push(`**Central Concept/Topic:** ${sections.centralConcept}`);
+        }
+        
+        // Desired output
+        if (sections.desiredOutput) {
+            parts.push(`**Desired Output:** ${sections.desiredOutput}`);
+        }
+        
+        // Role-play
+        if (sections.rolePlay) {
+            parts.push(`**Role-Play:** Assume the role of a ${sections.rolePlay}`);
+        }
+        
+        // Specific viewpoints/lenses
+        if (sections.specificViewpoints) {
+            parts.push(`**Analysis Perspective:** ${sections.specificViewpoints}`);
+        }
+        
+        // Time-anchored role
+        if (sections.timeAnchoredRole) {
+            parts.push(`**Time-Anchored Perspective:** ${sections.timeAnchoredRole}`);
+        }
         
         parts.push(`**Research Methodology:** ${sections.methodology}`);
         parts.push(`**Research Type:** ${sections.researchType}`);
         parts.push(`**Scope:** ${sections.scope}`);
         parts.push(`**Domain:** ${sections.domain}`);
         parts.push(`**Depth:** ${sections.depth}`);
+        
+        // Dilemma/Scenario
+        if (details.dilemmaScenario) {
+            parts.push(`**Dilemma/Scenario:** ${details.dilemmaScenario}`);
+        }
+        
+        // Breakdown elements
+        if (details.breakdownElements) {
+            parts.push(`**Breakdown Elements:** ${details.breakdownElements}`);
+        }
+        
+        // Evidence/Support
+        if (details.evidenceSupport) {
+            parts.push(`**Evidence/Support:** ${details.evidenceSupport}`);
+        }
         
         if (details.dataSources) {
             parts.push(`**Data Sources:** ${details.dataSources}`);
@@ -741,6 +961,31 @@ class MonsterPromptGenerator {
         
         if (details.objectives) {
             parts.push(`**Research Objectives:** ${details.objectives}`);
+        }
+        
+        // Critical thinking prompts
+        if (details.criticalThinking) {
+            parts.push(`**Critical Thinking:** ${details.criticalThinking}`);
+        }
+        
+        // Decomposition/Chain-of-thought
+        if (details.decomposition) {
+            parts.push(`**Approach:** Break down complex problems, explore distinct solution branches, evaluate quality, and justify choices`);
+        }
+        
+        // Reflection/Self-critique
+        if (details.reflection) {
+            parts.push(`**Process:** Provide your analysis, then identify potential flaws or limitations, and offer an improved perspective`);
+        }
+        
+        // Iterative learning
+        if (details.iterativeLearning) {
+            parts.push(`**Learning Approach:** ${details.iterativeLearning}`);
+        }
+        
+        // Web search guidance
+        if (details.webSearch) {
+            parts.push(`**Research Focus:** Use recent, contextual, and search-friendly terms. Focus on latest developments and trends`);
         }
         
         return parts.join('\n\n');
