@@ -771,4 +771,10 @@ if (typeof module !== 'undefined' && module.exports) {
     // Browser environment
     window.PromptsData = PromptsData;
     window.PromptsDataUtils = PromptsDataUtils;
+    
+    // Load keywords database if available
+    if (typeof KeywordsDatabase !== 'undefined') {
+        window.PromptsData.keywordsDatabase = KeywordsDatabase;
+        window.PromptsDataUtils.keywordsDatabase = KeywordsDatabaseUtils;
+    }
 }

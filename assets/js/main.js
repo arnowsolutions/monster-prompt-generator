@@ -19,6 +19,11 @@ function initializeApp() {
 
 // Initialize additional modules
 function initializeModules() {
+    // Initialize Keywords Database first
+    if (typeof KeywordsDatabase !== 'undefined') {
+        console.log('Keywords Database available with', KeywordsDatabaseUtils.getCategoryStats());
+    }
+    
     // Initialize ImagePreviewManager if available
     if (typeof ImagePreviewManager !== 'undefined') {
         window.imagePreviewManager = new ImagePreviewManager();
@@ -34,6 +39,11 @@ function initializeModules() {
                 console.warn('ImagePreviewManager could not be initialized');
             }
         }, 100);
+    }
+    
+    // Initialize prompt generator with keywords database
+    if (window.promptGenerator && typeof KeywordsDatabase !== 'undefined') {
+        window.promptGenerator.initializeKeywordsDatabase();
     }
 }
 

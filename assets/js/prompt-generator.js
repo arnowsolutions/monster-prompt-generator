@@ -25,6 +25,39 @@ class MonsterPromptGenerator {
         };
     }
 
+    // Initialize keywords database integration
+    initializeKeywordsDatabase() {
+        if (typeof KeywordsDatabase !== 'undefined') {
+            this.keywordsDB = KeywordsDatabase;
+            this.keywordsUtils = KeywordsDatabaseUtils;
+            console.log('Keywords Database loaded with', this.keywordsUtils.getCategoryStats());
+        } else {
+            console.warn('Keywords Database not available');
+        }
+    }
+
+    // Enhanced keyword selection using database
+    getEnhancedKeywords(category, count = 3) {
+        if (!this.keywordsUtils) return [];
+        
+        const keywords = [];
+        for (let i = 0; i < count; i++) {
+            const keyword = this.keywordsUtils.getRandomKeyword(category);
+            if (keyword) {
+                keywords.push(typeof keyword === 'object' ? keyword.name : keyword);
+            }
+        }
+        return keywords;
+    }
+
+    // Get keyword with full details for enhanced prompting
+    getKeywordWithDetails(category, keywordName) {
+        if (!this.keywordsUtils) return null;
+        
+        const results = this.keywordsUtils.searchKeywords(keywordName, category);
+        return results.length > 0 ? results[0] : null;
+    }
+
     // Generate prompt based on current tab
     generatePrompt(tabId = null) {
         const activeTab = tabId || this.getCurrentTab();
@@ -146,7 +179,14 @@ class MonsterPromptGenerator {
         const emotion = data.emotion || '';
         const atmosphere = data.atmosphere || '';
         
-        const moodElements = [mood, emotion, atmosphere].filter(Boolean);
+        let moodElements = [mood, emotion, atmosphere].filter(Boolean);
+        
+        // Enhance with database keywords if available
+        if (this.keywordsDB && moodElements.length < 2) {
+            const additionalMoods = this.getEnhancedKeywords('moods', 2 - moodElements.length);
+            moodElements = [...moodElements, ...additionalMoods];
+        }
+        
         return moodElements.length > 0 ? moodElements.join(', ') + ' atmosphere' : '';
     }
 
@@ -174,7 +214,13 @@ class MonsterPromptGenerator {
     // Build enhanced style section
     buildStyleSection(selectedStyles, data) {
         const mainStyle = data.style || '';
-        const styles = [mainStyle, ...selectedStyles].filter(Boolean);
+        let styles = [mainStyle, ...selectedStyles].filter(Boolean);
+        
+        // Enhance with database keywords if available
+        if (this.keywordsDB && styles.length < 3) {
+            const additionalStyles = this.getEnhancedKeywords('styles', 3 - styles.length);
+            styles = [...styles, ...additionalStyles];
+        }
         
         if (styles.length === 0) return '';
         
@@ -215,6 +261,17 @@ class MonsterPromptGenerator {
         // Get camera settings from form
         const shotView = document.getElementById('shot-view')?.value;
         const lensType = document.getElementById('lens-type')?.value;
+        
+        // Enhance with database keywords
+        if (this.keywordsDB) {
+            const cameraKeyword = this.getEnhancedKeywords('camera', 1)[0];
+            const lensKeyword = this.getEnhancedKeywords('cameraLens', 1)[0];
+            const angleKeyword = this.getEnhancedKeywords('cameraAngles', 1)[0];
+            
+            if (cameraKeyword && !shotView) elements.push(cameraKeyword);
+            if (lensKeyword && !lensType) elements.push(`shot with ${lensKeyword}`);
+            if (angleKeyword) elements.push(angleKeyword);
+        }
         
         if (shotView && shotView !== '') elements.push(shotView);
         if (lensType && lensType !== '') elements.push(`shot with ${lensType}`);
